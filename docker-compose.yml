@@ -1,15 +1,53 @@
 version: '3.1'
 services:
-  stats-server:
+  stats-client:
+    build: stats/stats-client/
+    image: stats_client
+    container_name: stats_client
     ports:
       - "9090:9090"
+      - "9091:9091"
+    depends_on:
+      - stats-server
+    environment:
+      - TZ=Europe/Moscow
+
+  stats-server:
+    build: stats/stats-server/
+    image: stats_server
+    container_name: stats_server
+    env_file:
+      - .env
+    ports:
+      - "8090:8090"
+      - "8091:8091"
+    depends_on:
+      - stats-db
+    environment:
+      - TZ=Europe/Moscow
+      - DB_HOST=stats-db
+      - DB_PORT=5432
+      - DB_NAME=stats
+      - POSTGRES_USER=${DB_USER_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
 
   stats-db:
     image: postgres:14-alpine
-
-  ewm-service:
+    volumes:
+      - /var/lib/postgresql/data/
+    env_file:
+      - .env
+    container_name: stats_db
     ports:
-      - "8080:8080"
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=stats
+      - POSTGRES_USER=${DB_USER_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
 
-  ewm-db:
-    image: postgres:14-alpine
+#  ewm-service:
+#    ports:
+#      - "8080:8080"
+#
+#  ewm-db:
+#    image: postgres:14-alpine
