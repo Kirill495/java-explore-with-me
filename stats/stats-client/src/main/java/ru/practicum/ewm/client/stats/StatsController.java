@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.stats.server.dto.EndpointHit;
+import ru.practicum.ewm.stats.server.dto.ViewStats;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -26,19 +27,20 @@ import java.util.List;
 public class StatsController {
 
    private final StatsClient client;
+   private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
    @PostMapping(path = "/hit", consumes = "application/json")
    @ResponseStatus(HttpStatus.CREATED)
-   public ResponseEntity<Object> saveInfo(@RequestBody @Valid EndpointHit endpointHit) {
+   public ResponseEntity<EndpointHit> saveInfo(@RequestBody @Valid EndpointHit endpointHit) {
          return client.saveInfo(endpointHit);
    }
 
    @GetMapping(path = "/stats", produces = "application/json")
    @ResponseStatus(HttpStatus.OK)
    @ResponseBody
-   public ResponseEntity<Object> fetchInfo(
-           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+   public ResponseEntity<List<ViewStats>> fetchInfo(
+           @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime start,
+           @RequestParam @DateTimeFormat(pattern = DATE_TIME_PATTERN) LocalDateTime end,
            @RequestParam(name = "uris", required = false) List<String> uris,
            @RequestParam(defaultValue = "false") boolean unique) {
 

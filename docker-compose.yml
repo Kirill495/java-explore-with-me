@@ -9,8 +9,6 @@ services:
       - "8081:8081"
     depends_on:
       - stats-server
-#    environment:
-#      - TZ=Europe/Moscow
 
   stats-server:
     build: stats/stats-server/
@@ -24,7 +22,6 @@ services:
     depends_on:
       - stats-db
     environment:
-#      - TZ=Europe/Moscow
       - DB_HOST=stats-db
       - DB_PORT=5432
       - DB_NAME=stats
@@ -44,16 +41,3 @@ services:
       - POSTGRES_DB=stats
       - POSTGRES_USER=${DB_USER_NAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-
-#  ewm-service:
-#    build: main-service/
-#    image: main_service
-#    container_name: main_service
-#    ports:
-#      - "7070:7070"
-#    depends_on:
-#      - stats-client
-##      - ewm-db
-
-#  ewm-db:
-#    image: postgres:14-alpine

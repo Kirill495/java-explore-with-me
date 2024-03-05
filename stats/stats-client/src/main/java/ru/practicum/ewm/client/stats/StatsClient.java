@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.stats.server.dto.EndpointHit;
+import ru.practicum.ewm.stats.server.dto.ViewStats;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,11 +31,12 @@ public class StatsClient extends BaseClient {
       );
    }
 
-   public ResponseEntity<Object> saveInfo(EndpointHit endpointHit) {
-      return post("/hit", endpointHit);
+   public ResponseEntity<EndpointHit> saveInfo(EndpointHit endpointHit) {
+      ResponseEntity<Object> result = post("/hit", endpointHit);
+      return new ResponseEntity<EndpointHit>((EndpointHit) result.getBody(), result.getStatusCode());
    }
 
-   public ResponseEntity<Object> fetchInfo(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+   public ResponseEntity<List<ViewStats>> fetchInfo(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
       String path = "/stats?start={start}&end={end}&unique={unique}";
       Map<String, Object> params = new HashMap<>();
       params.put("start",  start.format(FORMATTER));
@@ -46,8 +48,8 @@ public class StatsClient extends BaseClient {
             path += "&uris={uri" + uriIndex + "}";
             params.put("uri" + uriIndex++, uri);
          }
-
       }
-      return get(path, params);
+      ResponseEntity<Object> response = get(path, params);
+      return new ResponseEntity<>((List<ViewStats>) response.getBody(), response.getStatusCode());
    }
 }
