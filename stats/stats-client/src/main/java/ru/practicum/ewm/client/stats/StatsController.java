@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.stats.server.dto.EndpointHit;
+import ru.practicum.ewm.stats.server.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.server.dto.ViewStats;
 
 import javax.validation.Valid;
@@ -31,8 +32,9 @@ public class StatsController {
 
    @PostMapping(path = "/hit", consumes = "application/json")
    @ResponseStatus(HttpStatus.CREATED)
-   public ResponseEntity<EndpointHit> saveInfo(@RequestBody @Valid EndpointHit endpointHit) {
-         return client.saveInfo(endpointHit);
+   public ResponseEntity<EndpointHit> saveInfo(@RequestBody @Valid EndpointHitDto endpointHit) {
+         client.saveInfo(endpointHit);
+         return null;
    }
 
    @GetMapping(path = "/stats", produces = "application/json")

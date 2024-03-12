@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.stats.server.dto.EndpointHit;
+import ru.practicum.ewm.stats.server.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.server.dto.ViewStats;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class StatsClient extends BaseClient {
    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
    @Autowired
-   public StatsClient(@Value("${server.url}") String serverUrl, RestTemplateBuilder builder) {
+   public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
       super(
               builder
                       .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -31,9 +32,8 @@ public class StatsClient extends BaseClient {
       );
    }
 
-   public ResponseEntity<EndpointHit> saveInfo(EndpointHit endpointHit) {
+   public void saveInfo(EndpointHitDto endpointHit) {
       ResponseEntity<Object> result = post("/hit", endpointHit);
-      return new ResponseEntity<EndpointHit>((EndpointHit) result.getBody(), result.getStatusCode());
    }
 
    public ResponseEntity<List<ViewStats>> fetchInfo(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
