@@ -3,6 +3,7 @@ package ru.practicum.ewm.main_service.event.storage.specification;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.model.EventState;
 import ru.practicum.ewm.main_service.filter.AdminEventFilter;
 import ru.practicum.ewm.main_service.filter.PublicEventFilter;
 import ru.practicum.ewm.main_service.participation.model.RequestStatus;
@@ -44,7 +45,14 @@ public class EventSpecification {
          return builder.and(predicates.toArray(Predicate[]::new));
       };
    }
-
+   public static Specification<EventEntity> ofEventIdAndPublished(Long eventId) {
+      return (root, query, builder) -> {
+         List<Predicate> predicates = new ArrayList<>();
+         predicates.add(builder.equal(root.get("state"), EventState.PUBLISHED));
+         predicates.add(builder.equal(root.get("id"), eventId));
+         return builder.and(predicates.toArray(Predicate[]::new));
+      };
+   }
    public static Specification<EventEntity> ofCategory(Long categoryId) {
       return (root, query, builder) -> {
          List<Predicate> predicates = new ArrayList<>();
@@ -77,15 +85,15 @@ public class EventSpecification {
             predicates.add(builder.greaterThanOrEqualTo(root.get("eventDate"), filter.getRangeStart()));
          if (Objects.nonNull(filter.getRangeEnd()))
             predicates.add(builder.lessThanOrEqualTo(root.get("eventDate"), filter.getRangeEnd()));
-//         if (Objects.nonNull(filter.getOnlyAvailable()) && filter.getOnlyAvailable()) {
-//            Subquery<Long> sub = query.subquery(Long.class);
-//            Root<RequestEntity> requestRoot = sub.from(RequestEntity.class);
-//            sub.select(builder.count(requestRoot)).where(builder.and(
-//                    builder.equal(requestRoot.get("event").get("id"), root.get("id")),
-//                    builder.equal(requestRoot.get("status"), RequestStatus.CONFIRMED.name())
-//            ));
-//            predicates.add(builder.greaterThan(root.get("participantLimit"), sub));
-//         }
+         if (Objects.nonNull(filter.getOnlyAvailable()) && filter.getOnlyAvailable()) {
+            Subquery<Long> sub = query.subquery(Long.class);
+            Root<RequestEntity> requestRoot = sub.from(RequestEntity.class);
+            sub.select(builder.count(requestRoot)).where(builder.and(
+                    builder.equal(requestRoot.get("event").get("id"), root.get("id")),
+                    builder.equal(requestRoot.get("status"), RequestStatus.CONFIRMED.name())
+            ));
+            predicates.add(builder.greaterThan(root.get("participantLimit"), sub));
+         }
          return builder.and(predicates.toArray(Predicate[]::new));
       };
    }

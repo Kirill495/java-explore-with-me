@@ -12,6 +12,7 @@ import ru.practicum.ewm.main_service.event.dto.EventShortDto;
 import ru.practicum.ewm.main_service.event.storage.service.EventService;
 import ru.practicum.ewm.main_service.filter.PublicEventFilter;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -25,14 +26,20 @@ public class PubEventController {
 
    @GetMapping
    @ResponseStatus(HttpStatus.OK)
-   public List<EventShortDto> getEvents(@Valid PublicEventFilter filter) {
+   public List<EventShortDto> getEvents(
+           @Valid PublicEventFilter filter,
+           HttpServletRequest request) {
+      service.recordEndpointHit(request);
       return service.getEventsPublic(filter);
    }
 
    @GetMapping(path = "/{eventId}")
    @ResponseStatus(HttpStatus.OK)
-   public EventFullDto getEvents(@PathVariable @Positive Long eventId) {
-      return service.getEvent(eventId);
+   public EventFullDto getEvents(
+           @PathVariable @Positive Long eventId,
+           HttpServletRequest request) {
+      service.recordEndpointHit(request);
+      return service.getPublishedEvent(eventId);
    }
 
 }

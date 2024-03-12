@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.main_service.category.storage.service.CategoryService;
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
@@ -14,6 +13,8 @@ import ru.practicum.ewm.main_service.event.dto.EventShortDto;
 import ru.practicum.ewm.main_service.event.dto.NewEventDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventUserRequest;
+import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.entity.RequestsToEvent;
 import ru.practicum.ewm.main_service.event.exception.EventGetException;
 import ru.practicum.ewm.main_service.event.exception.EventNotFoundException;
 import ru.practicum.ewm.main_service.event.exception.EventUpdateException;
@@ -22,8 +23,6 @@ import ru.practicum.ewm.main_service.event.model.Event;
 import ru.practicum.ewm.main_service.event.model.EventSortFields;
 import ru.practicum.ewm.main_service.event.model.EventState;
 import ru.practicum.ewm.main_service.event.model.EventStateAction;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
-import ru.practicum.ewm.main_service.event.entity.RequestsToEvent;
 import ru.practicum.ewm.main_service.event.storage.repository.EventRepository;
 import ru.practicum.ewm.main_service.event.storage.specification.EventSpecification;
 import ru.practicum.ewm.main_service.filter.AdminEventFilter;
@@ -32,9 +31,12 @@ import ru.practicum.ewm.main_service.participation.model.RequestStatus;
 import ru.practicum.ewm.main_service.participation.storage.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.main_service.user.model.User;
 import ru.practicum.ewm.main_service.user.storage.service.UserService;
+import ru.practicum.ewm.stats.server.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.server.dto.ViewStats;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,6 +60,9 @@ public class EventServiceImpl implements EventService {
 
    private final StatsClient statsClient;
 
+   private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+   private static final String APPLICATION_NAME = "ewm-main-service";
+
    @Override
    public EventFullDto addNewEvent(Long userId, NewEventDto eventDto) {
       User user = userService.getUserUtil(userId);
@@ -77,25 +82,33 @@ public class EventServiceImpl implements EventService {
               .where(EventSpecification.ofInitiator(userId));
       List<EventEntity> eventEntities = repository.findAll(specification, page).toList();
       List<Event> events = eventMapper.toModel(eventEntities);
-      appendViews(events);
-      appendConfirmedRequests(events);
+      appendStats(events);
       return eventMapper.toFullDto(events);
    }
 
    @Override
-   public EventFullDto getEvent(Long eventId) {
-      Event event = eventMapper.toModel(repository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId)));
-      appendViews(event);
-      appendConfirmedRequests(event);
+   public EventFullDto getPublishedEvent(Long eventId) {
+
+      EventEntity entity = repository
+              .findOne(EventSpecification.ofEventIdAndPublished(eventId))
+              .orElseThrow(() -> new EventNotFoundException(eventId));
+      Event event = eventMapper.toModel(entity);
+      appendStats(event);
       return eventMapper.toFullDto(event);
    }
 
    @Override
    public EventFullDto getUserEvent(Long userId, Long eventId) {
       Event event = getUserEventUtil(userId, eventId);
-      appendViews(event);
-      appendConfirmedRequests(event);
+      appendStats(event);
       return eventMapper.toFullDto(event);
+   }
+
+   @Override
+   public List<Event> getEventsByIds(List<Long> ids) {
+      List<Event> events = eventMapper.toModel(repository.findAllById(ids));
+      appendStats(events);
+      return events;
    }
 
    @Override
@@ -120,8 +133,7 @@ public class EventServiceImpl implements EventService {
       updateEventByAuthorInner(event, request);
       entity = repository.save(eventMapper.toEntity(event));
       Event resEvent = eventMapper.toModel(entity);
-      appendViews(resEvent);
-      appendConfirmedRequests(resEvent);
+      appendStats(resEvent);
       return eventMapper.toFullDto(resEvent);
    }
 
@@ -138,13 +150,12 @@ public class EventServiceImpl implements EventService {
          throw new EventUpdateException("Event in PUBLISHED state can not be canceled");
       }
       updateEventByAdminInner(event, updateRequest);
-      if (!event.getEventDate().isAfter(event.getPublishedOn().plusHours(1))) {
+      if (event.getPublishedOn() != null && !event.getEventDate().isAfter(event.getPublishedOn().plusHours(1))) {
          throw new EventUpdateException("Distance between published date and event date must be more than one hour");
       }
       entity = repository.save(eventMapper.toEntity(event));
       Event resEvent = eventMapper.toModel(entity);
-      appendViews(resEvent);
-      appendConfirmedRequests(resEvent);
+      appendStats(resEvent);
       return eventMapper.toFullDto(resEvent);
    }
 
@@ -165,8 +176,7 @@ public class EventServiceImpl implements EventService {
       Specification<EventEntity> specification = EventSpecification.ofFilter(filter);
       List<EventEntity> eventEntities = repository.findAll(specification, pageable).getContent();
       List<Event> events = eventMapper.toModel(eventEntities);
-      appendViews(events);
-      appendConfirmedRequests(events);
+      appendStats(events);
       if (Objects.nonNull(filter.getSort()) && filter.getSort().equals(EventSortFields.VIEWS)) {
          events.sort(Comparator.comparingInt(Event::getViews));
       }
@@ -181,14 +191,28 @@ public class EventServiceImpl implements EventService {
               .findAll(EventSpecification.ofFilter(filter), pageable)
               .getContent();
       List<Event> events = eventMapper.toModel(eventEntities);
-      appendViews(events);
-      appendConfirmedRequests(events);
+      appendStats(events);
       return eventMapper.toFullDto(events);
 
    }
 
-   private void appendViews(Event event) {
-      appendViews(List.of(event));
+   @Override
+   public void recordEndpointHit(HttpServletRequest request) {
+      EndpointHitDto endpointHit = EndpointHitDto.builder()
+              .withApp(APPLICATION_NAME)
+              .withIp(request.getRemoteAddr())
+              .withUri(request.getRequestURI())
+              .withTimestamp(LocalDateTime.now().format(FORMATTER))
+              .build();
+
+      statsClient.saveInfo(endpointHit);
+   }
+   public void appendStats(Event event) {
+      appendStats(List.of(event));
+   }
+   public void appendStats(List<Event> events) {
+      appendViews(events);
+      appendConfirmedRequests(events);
    }
 
    private void appendViews(List<Event> events) {
@@ -212,10 +236,6 @@ public class EventServiceImpl implements EventService {
       for (Event event : events) {
          event.setViews(views.getOrDefault(event.getId(), 0));
       }
-   }
-
-   private void appendConfirmedRequests(Event event) {
-      appendConfirmedRequests(List.of(event));
    }
 
    private void appendConfirmedRequests(List<Event> events) {

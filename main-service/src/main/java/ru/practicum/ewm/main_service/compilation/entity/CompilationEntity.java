@@ -1,5 +1,7 @@
 package ru.practicum.ewm.main_service.compilation.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.ewm.main_service.event.entity.EventEntity;
 
@@ -14,6 +16,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.List;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "compilations")
 public class CompilationEntity {
@@ -33,7 +37,7 @@ public class CompilationEntity {
                    referencedColumnName = "id"
            )
    )
-   private List<EventEntity> content;
+   private List<EventEntity> events;
 
    @Column(name = "pinned", nullable = false)
    private Boolean pinned;

@@ -9,6 +9,7 @@ import ru.practicum.ewm.main_service.event.model.Event;
 import ru.practicum.ewm.main_service.filter.AdminEventFilter;
 import ru.practicum.ewm.main_service.filter.PublicEventFilter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventService {
@@ -16,7 +17,7 @@ public interface EventService {
 
    List<EventFullDto> getUserEvents(long userId, int from, int size);
 
-   EventFullDto getEvent(Long eventId);
+   EventFullDto getPublishedEvent(Long eventId);
 
    EventFullDto getUserEvent(Long userId, Long eventId);
 
@@ -29,4 +30,12 @@ public interface EventService {
    List<EventShortDto> getEventsPublic(PublicEventFilter filter);
 
    List<EventFullDto> getEventsAdmin(AdminEventFilter filter);
+
+   List<Event> getEventsByIds(List<Long> ids);
+
+   void recordEndpointHit(HttpServletRequest request);
+
+   void appendStats(Event event);
+
+   void appendStats(List<Event> events);
 }

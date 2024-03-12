@@ -12,7 +12,7 @@ import java.util.List;
 public class NewCompilationDto {
 
    @UniqueElements
-   private List<Integer> events;
+   private List<Long> events;
 
    private Boolean pinned = false;
 

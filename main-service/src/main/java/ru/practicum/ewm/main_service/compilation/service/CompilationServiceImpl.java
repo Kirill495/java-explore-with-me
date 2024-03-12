@@ -1,0 +1,118 @@
+package ru.practicum.ewm.main_service.compilation.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.client.stats.StatsClient;
+import ru.practicum.ewm.main_service.compilation.dto.CompilationDto;
+import ru.practicum.ewm.main_service.compilation.dto.NewCompilationDto;
+import ru.practicum.ewm.main_service.compilation.dto.UpdateCompilationDto;
+import ru.practicum.ewm.main_service.compilation.entity.CompilationEntity;
+import ru.practicum.ewm.main_service.compilation.exception.CompilationNotFoundException;
+import ru.practicum.ewm.main_service.compilation.mapper.CompilationMapper;
+import ru.practicum.ewm.main_service.compilation.model.Compilation;
+import ru.practicum.ewm.main_service.compilation.repository.CompilationRepository;
+import ru.practicum.ewm.main_service.event.mapper.EventMapper;
+import ru.practicum.ewm.main_service.event.model.Event;
+import ru.practicum.ewm.main_service.event.storage.repository.EventRepository;
+import ru.practicum.ewm.main_service.event.storage.service.EventService;
+import ru.practicum.ewm.main_service.filter.BaseFilter;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class CompilationServiceImpl implements CompilationService {
+
+   private final CompilationRepository repository;
+   private final EventService eventService;
+   private final CompilationMapper mapper;
+
+   @Override
+   @Transactional
+   public CompilationDto createCompilation(NewCompilationDto input) {
+
+      Compilation compilation = mapper.toModel(input);
+      appendEvents(compilation, input.getEvents());
+      CompilationEntity entity = repository.save(mapper.toEntity(compilation));
+      compilation.setId(entity.getId());
+      return mapper.toDto(compilation);
+   }
+
+   @Override
+   public CompilationDto updateCompilation(Long id, UpdateCompilationDto input) {
+      Compilation existingComp = findById(id);
+      Compilation updComp = mapper.toModel(input);
+      appendEvents(updComp, input.getEvents());
+      existingComp.setEvents(updComp.getEvents());
+      existingComp.setPinned(updComp.getPinned());
+      existingComp.setTitle(updComp.getTitle());
+
+      repository.save(mapper.toEntity(existingComp));
+      appendStatsToCompilationEvents(existingComp);
+      return mapper.toDto(existingComp);
+   }
+
+   @Override
+   @Transactional
+   public void removeCompilation(Long id) {
+      repository.deleteById(id);
+   }
+
+   @Override
+   @Transactional(readOnly = true)
+   public CompilationDto getCompilation(long id) {
+      Compilation compilation = findById(id);
+      appendStatsToCompilationEvents(compilation);
+      return mapper.toDto(compilation);
+   }
+
+   @Override
+   public List<CompilationDto> getCompilations(boolean pinned, BaseFilter filter) {
+
+      Pageable pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
+      List<Compilation> compilations;
+      if (pinned) {
+         compilations = mapper.toModel(repository.findAllByPinned(true, pageable));
+      } else {
+         compilations = mapper.toModel(repository.findAll(pageable).getContent());
+      }
+      appendStatsToCompilations(compilations);
+
+      return mapper.toDto(compilations);
+   }
+
+   private Compilation findById(long id) {
+      return mapper.toModel(repository.findById(id).orElseThrow(() -> new CompilationNotFoundException(id)));
+   }
+   private void appendEvents(Compilation compilation, List<Long> eventIds) {
+      compilation.setEvents(getEvents(eventIds));
+   }
+
+   private List<Event> getEvents(List<Long> eventIds) {
+      return eventIds.isEmpty() ? Collections.emptyList() : eventService.getEventsByIds(eventIds);
+   }
+
+   private void appendStatsToCompilations(List<Compilation> compilations) {
+      List<Event> events = compilations.stream()
+              .flatMap(compilation -> (compilation.getEvents()).stream())
+              .collect(Collectors.toList());
+      eventService.appendStats(events);
+      Map<Long, Event> stats = events.stream()
+              .collect(Collectors.toMap(Event::getId, Function.identity()));
+      for (Event event: events) {
+         event.setViews(stats.get(event.getId()).getViews());
+         event.setConfirmedRequests(stats.get(event.getId()).getConfirmedRequests());
+      }
+   }
+   private void appendStatsToCompilationEvents(Compilation compilation) {
+      eventService.appendStats(compilation.getEvents());
+   }
+}

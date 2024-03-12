@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.ewm.stats.server.dto.EndpointHit;
 import ru.practicum.ewm.stats.server.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.server.dto.ViewStats;
 
@@ -33,7 +32,7 @@ public class StatsClient extends BaseClient {
    }
 
    public void saveInfo(EndpointHitDto endpointHit) {
-      ResponseEntity<Object> result = post("/hit", endpointHit);
+      postEndpoint("/hit", endpointHit);
    }
 
    public ResponseEntity<List<ViewStats>> fetchInfo(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
@@ -49,7 +48,6 @@ public class StatsClient extends BaseClient {
             params.put("uri" + uriIndex++, uri);
          }
       }
-      ResponseEntity<Object> response = get(path, params);
-      return new ResponseEntity<>((List<ViewStats>) response.getBody(), response.getStatusCode());
+      return getStats(path, params);
    }
 }

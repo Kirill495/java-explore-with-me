@@ -157,7 +157,12 @@ public class RequestServiceImpl implements RequestService {
       if (event.getParticipantLimit() != 0 && curRequests == (long) event.getParticipantLimit()) {
          throw new NewParticipationRequestException("Достигнут лимит запросов на участие");
       }
-      Request request = new Request(null, event, currentUser,event.getRequestModeration() ? RequestStatus.PENDING : RequestStatus.CONFIRMED, null);
+      Request request = new Request(
+              null,
+              event,
+              currentUser,
+              (event.getRequestModeration() && event.getParticipantLimit() > 0) ? RequestStatus.PENDING : RequestStatus.CONFIRMED,
+              null);
 
       RequestEntity entity = requestRepository.save(mapper.toEntity(request));
       return mapper.toDto(mapper.toModel(entity));
