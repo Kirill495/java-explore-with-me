@@ -2,7 +2,7 @@ package ru.practicum.ewm.main_service.participation.storage.specification;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 import ru.practicum.ewm.main_service.participation.model.RequestStatus;
 import ru.practicum.ewm.main_service.participation.storage.entity.RequestEntity;
 import ru.practicum.ewm.main_service.user.storage.entity.UserEntity;

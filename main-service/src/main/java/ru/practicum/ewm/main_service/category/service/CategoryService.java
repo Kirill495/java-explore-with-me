@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.category.storage.service;
+package ru.practicum.ewm.main_service.category.service;
 
 import ru.practicum.ewm.main_service.category.dto.CategoryDto;
 import ru.practicum.ewm.main_service.category.dto.NewCategoryDto;

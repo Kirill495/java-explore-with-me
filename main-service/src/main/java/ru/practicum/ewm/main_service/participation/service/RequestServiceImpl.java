@@ -7,9 +7,9 @@ import ru.practicum.ewm.main_service.event.exception.EventNotFoundException;
 import ru.practicum.ewm.main_service.event.mapper.EventMapper;
 import ru.practicum.ewm.main_service.event.model.Event;
 import ru.practicum.ewm.main_service.event.model.EventState;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 import ru.practicum.ewm.main_service.event.storage.repository.EventRepository;
-import ru.practicum.ewm.main_service.event.storage.service.EventService;
+import ru.practicum.ewm.main_service.event.service.EventService;
 import ru.practicum.ewm.main_service.participation.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.main_service.participation.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.main_service.participation.dto.ParticipationRequestDto;
@@ -24,7 +24,7 @@ import ru.practicum.ewm.main_service.participation.storage.repository.Participat
 import ru.practicum.ewm.main_service.participation.storage.specification.RequestSpecs;
 import ru.practicum.ewm.main_service.user.mapper.UserMapper;
 import ru.practicum.ewm.main_service.user.model.User;
-import ru.practicum.ewm.main_service.user.storage.service.UserService;
+import ru.practicum.ewm.main_service.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;

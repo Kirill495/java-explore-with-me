@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
-import ru.practicum.ewm.main_service.event.entity.RequestsToEvent;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.RequestsToEvent;
 import ru.practicum.ewm.main_service.participation.model.RequestStatus;
 import ru.practicum.ewm.main_service.participation.storage.entity.RequestEntity;
 
@@ -16,7 +16,7 @@ public interface ParticipationRequestRepository extends JpaRepository<RequestEnt
         JpaSpecificationExecutor<RequestEntity> {
 
    @Query("SELECT " +
-           "new ru.practicum.ewm.main_service.event.entity.RequestsToEvent(r.event, COUNT(r)) " +
+           "new ru.practicum.ewm.main_service.event.storage.entity.RequestsToEvent(r.event, COUNT(r)) " +
            "FROM " +
            "   RequestEntity AS r " +
            "WHERE " +

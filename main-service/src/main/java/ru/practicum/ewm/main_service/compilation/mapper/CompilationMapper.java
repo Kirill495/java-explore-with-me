@@ -7,7 +7,7 @@ import org.mapstruct.ReportingPolicy;
 import ru.practicum.ewm.main_service.compilation.dto.CompilationDto;
 import ru.practicum.ewm.main_service.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.main_service.compilation.dto.UpdateCompilationDto;
-import ru.practicum.ewm.main_service.compilation.entity.CompilationEntity;
+import ru.practicum.ewm.main_service.compilation.storage.entity.CompilationEntity;
 import ru.practicum.ewm.main_service.compilation.model.Compilation;
 import ru.practicum.ewm.main_service.event.mapper.EventMapper;
 

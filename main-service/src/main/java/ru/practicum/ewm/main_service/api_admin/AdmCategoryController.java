@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.main_service.category.dto.CategoryDto;
 import ru.practicum.ewm.main_service.category.dto.NewCategoryDto;
-import ru.practicum.ewm.main_service.category.storage.service.CategoryService;
+import ru.practicum.ewm.main_service.category.service.CategoryService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(path = "/admin/categories")
 @Validated

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.user.storage.service;
+package ru.practicum.ewm.main_service.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;

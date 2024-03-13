@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.category.storage.service;
+package ru.practicum.ewm.main_service.category.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +13,7 @@ import ru.practicum.ewm.main_service.category.mapper.CategoryMapper;
 import ru.practicum.ewm.main_service.category.model.Category;
 import ru.practicum.ewm.main_service.category.storage.entity.CategoryEntity;
 import ru.practicum.ewm.main_service.category.storage.repository.CategoryRepository;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 import ru.practicum.ewm.main_service.event.storage.repository.EventRepository;
 import ru.practicum.ewm.main_service.event.storage.specification.EventSpecification;
 

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.event.storage.service;
+package ru.practicum.ewm.main_service.event.service;
 
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
 import ru.practicum.ewm.main_service.event.dto.EventShortDto;

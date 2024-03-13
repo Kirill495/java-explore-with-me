@@ -1,9 +1,9 @@
-package ru.practicum.ewm.main_service.compilation.entity;
+package ru.practicum.ewm.main_service.compilation.storage.entity;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

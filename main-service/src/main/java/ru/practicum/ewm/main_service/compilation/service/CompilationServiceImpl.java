@@ -8,13 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.main_service.compilation.dto.CompilationDto;
 import ru.practicum.ewm.main_service.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.main_service.compilation.dto.UpdateCompilationDto;
-import ru.practicum.ewm.main_service.compilation.entity.CompilationEntity;
+import ru.practicum.ewm.main_service.compilation.storage.entity.CompilationEntity;
 import ru.practicum.ewm.main_service.compilation.exception.CompilationNotFoundException;
 import ru.practicum.ewm.main_service.compilation.mapper.CompilationMapper;
 import ru.practicum.ewm.main_service.compilation.model.Compilation;
-import ru.practicum.ewm.main_service.compilation.repository.CompilationRepository;
+import ru.practicum.ewm.main_service.compilation.storage.repository.CompilationRepository;
+import ru.practicum.ewm.main_service.compilation.storage.specification.CompilationSpecification;
 import ru.practicum.ewm.main_service.event.model.Event;
-import ru.practicum.ewm.main_service.event.storage.service.EventService;
+import ru.practicum.ewm.main_service.event.service.EventService;
 import ru.practicum.ewm.main_service.filter.BaseFilter;
 
 import java.util.Collections;
@@ -80,12 +81,14 @@ public class CompilationServiceImpl implements CompilationService {
    public List<CompilationDto> getCompilations(boolean pinned, BaseFilter filter) {
 
       Pageable pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
-      List<Compilation> compilations;
-      if (pinned) {
-         compilations = mapper.toModel(repository.findAllByPinned(true, pageable));
-      } else {
-         compilations = mapper.toModel(repository.findAll(pageable).getContent());
-      }
+      List<Compilation> compilations = mapper.toModel(
+              repository.findAll(CompilationSpecification.isPinned(pinned), pageable).getContent());
+//      if (pinned) {
+//         compilations = mapper.toModel(
+//                 repository.findAll(CompilationSpecification.isPinned(pinned), pageable).getContent());
+//      } else {
+//         compilations = mapper.toModel(repository.findAll(pageable).getContent());
+//      }
       appendStatsToCompilations(compilations);
 
       return mapper.toDto(compilations);

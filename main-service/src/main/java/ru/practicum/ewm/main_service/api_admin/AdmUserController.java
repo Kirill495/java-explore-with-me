@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.main_service.user.dto.UserDto;
 import ru.practicum.ewm.main_service.user.dto.UserInputDto;
-import ru.practicum.ewm.main_service.user.storage.service.UserService;
+import ru.practicum.ewm.main_service.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

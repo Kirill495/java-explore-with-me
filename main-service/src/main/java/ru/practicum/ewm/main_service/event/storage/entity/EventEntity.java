@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.event.entity;
+package ru.practicum.ewm.main_service.event.storage.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

@@ -11,7 +11,7 @@ import ru.practicum.ewm.main_service.event.dto.NewEventDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.main_service.event.model.Event;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 import ru.practicum.ewm.main_service.user.mapper.UserMapper;
 
 import java.util.Collection;

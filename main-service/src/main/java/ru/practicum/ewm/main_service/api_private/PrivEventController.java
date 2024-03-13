@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
 import ru.practicum.ewm.main_service.event.dto.NewEventDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventUserRequest;
-import ru.practicum.ewm.main_service.event.storage.service.EventService;
+import ru.practicum.ewm.main_service.event.service.EventService;
 import ru.practicum.ewm.main_service.participation.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.main_service.participation.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.main_service.participation.dto.ParticipationRequestDto;

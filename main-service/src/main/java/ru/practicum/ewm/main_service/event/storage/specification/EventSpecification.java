@@ -2,7 +2,7 @@ package ru.practicum.ewm.main_service.event.storage.specification;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 import ru.practicum.ewm.main_service.event.model.EventState;
 import ru.practicum.ewm.main_service.filter.AdminEventFilter;
 import ru.practicum.ewm.main_service.filter.PublicEventFilter;

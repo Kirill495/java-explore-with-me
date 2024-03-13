@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.event.storage.service;
+package ru.practicum.ewm.main_service.event.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -7,14 +7,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.stats.client.StatsClient;
-import ru.practicum.ewm.main_service.category.storage.service.CategoryService;
+import ru.practicum.ewm.main_service.category.service.CategoryService;
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
 import ru.practicum.ewm.main_service.event.dto.EventShortDto;
 import ru.practicum.ewm.main_service.event.dto.NewEventDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventUserRequest;
-import ru.practicum.ewm.main_service.event.entity.EventEntity;
-import ru.practicum.ewm.main_service.event.entity.RequestsToEvent;
+import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
+import ru.practicum.ewm.main_service.event.storage.entity.RequestsToEvent;
 import ru.practicum.ewm.main_service.event.exception.EventGetException;
 import ru.practicum.ewm.main_service.event.exception.EventNotFoundException;
 import ru.practicum.ewm.main_service.event.exception.EventUpdateException;
@@ -30,7 +30,7 @@ import ru.practicum.ewm.main_service.filter.PublicEventFilter;
 import ru.practicum.ewm.main_service.participation.model.RequestStatus;
 import ru.practicum.ewm.main_service.participation.storage.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.main_service.user.model.User;
-import ru.practicum.ewm.main_service.user.storage.service.UserService;
+import ru.practicum.ewm.main_service.user.service.UserService;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
 import ru.practicum.ewm.stats.dto.ViewStats;
 
