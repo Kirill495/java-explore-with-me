@@ -1,6 +1,8 @@
 package ru.practicum.ewm.main_service.api_public;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +29,8 @@ public class PubCategoryController {
    public List<CategoryDto> getCategories(
            @RequestParam(name = "from", defaultValue = "0") int from,
            @RequestParam(name = "size", defaultValue = "10") int size) {
-      return service.getCategories(from, size);
+      Pageable page = PageRequest.of(from / size, size);
+      return service.getCategories(page);
    }
 
    @GetMapping(path = "{catId}")

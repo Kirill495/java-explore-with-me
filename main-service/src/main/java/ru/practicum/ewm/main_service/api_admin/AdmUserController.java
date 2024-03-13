@@ -1,6 +1,8 @@
 package ru.practicum.ewm.main_service.api_admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -42,8 +44,8 @@ public class AdmUserController {
            @RequestParam(name = "ids", required = false)  List<Long> ids,
            @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero Long from,
            @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
-
-      return new ResponseEntity<>(service.getUsers(ids, from, size), HttpStatus.OK);
+      Pageable page = PageRequest.of(from.intValue() / size, size);
+      return new ResponseEntity<>(service.getUsers(ids, page), HttpStatus.OK);
    }
 
    @DeleteMapping(path = "/{user-id}")

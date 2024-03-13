@@ -1,6 +1,8 @@
 package ru.practicum.ewm.main_service.api_private;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -46,7 +48,8 @@ public class PrivEventController {
            @PathVariable(name = "userId") @Positive Long userId,
            @RequestParam(name = "from", defaultValue = "0") int from,
            @RequestParam(name = "size", defaultValue = "10") int size) {
-      return eventService.getUserEvents(userId, from, size);
+      Pageable page = PageRequest.of(from / size, size);
+      return eventService.getUserEvents(userId, page);
    }
 
    @ResponseStatus(HttpStatus.OK)

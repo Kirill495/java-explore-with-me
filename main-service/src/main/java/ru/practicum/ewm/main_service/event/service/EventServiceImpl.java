@@ -75,9 +75,8 @@ public class EventServiceImpl implements EventService {
    }
 
    @Override
-   public List<EventFullDto> getUserEvents(long userId, int from, int size) {
+   public List<EventFullDto> getUserEvents(long userId, Pageable page) {
       userService.getUserUtil(userId);
-      Pageable page = PageRequest.of(from / size, size);
       Specification<EventEntity> specification = Specification
               .where(EventSpecification.ofInitiator(userId));
       List<EventEntity> eventEntities = repository.findAll(specification, page).toList();

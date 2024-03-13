@@ -1,7 +1,6 @@
 package ru.practicum.ewm.main_service.category.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -41,8 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
    }
 
    @Override
-   public List<CategoryDto> getCategories(int from, int size) {
-      Pageable page = PageRequest.of(from / size, size);
+   public List<CategoryDto> getCategories(Pageable page) {
       return mapper.toDto(repository.findAll(page).toList());
    }
 
@@ -58,7 +56,9 @@ public class CategoryServiceImpl implements CategoryService {
 
    @Override
    public void removeCategory(Long id) {
-      repository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+      if (repository.existsById(id)) {
+         throw new CategoryNotFoundException(id);
+      }
 
       Specification<EventEntity> spec = Specification.where(EventSpecification.ofCategory(id));
       if (eventRepository.exists(spec)) {

@@ -2,12 +2,10 @@ package ru.practicum.ewm.main_service.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.main_service.user.dto.UserInputDto;
 import ru.practicum.ewm.main_service.user.dto.UserDto;
+import ru.practicum.ewm.main_service.user.dto.UserInputDto;
 import ru.practicum.ewm.main_service.user.exception.UserNotFoundException;
 import ru.practicum.ewm.main_service.user.mapper.UserMapper;
 import ru.practicum.ewm.main_service.user.model.User;
@@ -29,9 +27,9 @@ public class UserServiceImpl implements UserService {
    }
 
    @Override
-   public List<UserDto> getUsers(List<Long> ids, long from, int size) {
+   public List<UserDto> getUsers(List<Long> ids, Pageable page) {
+
       if ((ids == null) || ids.isEmpty()) {
-         Pageable page = PageRequest.of((int) from / size, size, Sort.by("id"));
          return mapper.toOutputDto(mapper.toModel(repository.findAll(page).toList()));
       } else {
          return mapper.toOutputDto(mapper.toModel(repository.findAllById(ids)));

@@ -1,5 +1,6 @@
 package ru.practicum.ewm.main_service.category.service;
 
+import org.springframework.data.domain.Pageable;
 import ru.practicum.ewm.main_service.category.dto.CategoryDto;
 import ru.practicum.ewm.main_service.category.dto.NewCategoryDto;
 import ru.practicum.ewm.main_service.category.model.Category;
@@ -13,7 +14,7 @@ public interface CategoryService {
 
    void removeCategory(Long id);
 
-   List<CategoryDto> getCategories(int from, int size);
+   List<CategoryDto> getCategories(Pageable page);
 
    CategoryDto getCategory(Long catId);
 

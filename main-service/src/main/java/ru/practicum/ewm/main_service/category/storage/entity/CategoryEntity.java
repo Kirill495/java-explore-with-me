@@ -1,6 +1,7 @@
 package ru.practicum.ewm.main_service.category.storage.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +12,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "categories")
-@Data
+@Getter
+@Setter
 public class CategoryEntity {
 
    @Id

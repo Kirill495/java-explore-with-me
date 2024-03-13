@@ -1,6 +1,7 @@
 package ru.practicum.ewm.main_service.event.storage.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.ewm.main_service.category.storage.entity.CategoryEntity;
 import ru.practicum.ewm.main_service.event.model.EventState;
@@ -10,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "events")
 public class EventEntity {
@@ -30,7 +33,7 @@ public class EventEntity {
    @Column(name = "annotation")
    private String annotation;
 
-   @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "category_id")
    private CategoryEntity category;
 
@@ -44,7 +47,7 @@ public class EventEntity {
    @Column(name = "event_date")
    private LocalDateTime eventDate;
 
-   @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "initiator_id")
    private UserEntity initiator;
 

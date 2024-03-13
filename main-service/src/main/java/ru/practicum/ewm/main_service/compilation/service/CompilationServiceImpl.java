@@ -83,12 +83,6 @@ public class CompilationServiceImpl implements CompilationService {
       Pageable pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
       List<Compilation> compilations = mapper.toModel(
               repository.findAll(CompilationSpecification.isPinned(pinned), pageable).getContent());
-//      if (pinned) {
-//         compilations = mapper.toModel(
-//                 repository.findAll(CompilationSpecification.isPinned(pinned), pageable).getContent());
-//      } else {
-//         compilations = mapper.toModel(repository.findAll(pageable).getContent());
-//      }
       appendStatsToCompilations(compilations);
 
       return mapper.toDto(compilations);
