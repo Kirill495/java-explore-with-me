@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stats.server.dto;
+package ru.practicum.ewm.stats.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,6 @@ import lombok.Data;
 @Builder(setterPrefix = "with")
 @Data
 public class EndpointHitDto {
-
    private String app;
    private String uri;
    private String ip;

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stats.server.dto;
+package ru.practicum.ewm.stats.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
