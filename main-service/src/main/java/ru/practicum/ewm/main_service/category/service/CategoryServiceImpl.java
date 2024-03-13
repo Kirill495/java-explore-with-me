@@ -56,7 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 
    @Override
    public void removeCategory(Long id) {
-      if (repository.existsById(id)) {
+      if (!repository.existsById(id)) {
          throw new CategoryNotFoundException(id);
       }
 
