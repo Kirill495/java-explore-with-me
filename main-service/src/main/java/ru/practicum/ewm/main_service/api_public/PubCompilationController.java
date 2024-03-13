@@ -24,10 +24,10 @@ public class PubCompilationController {
 
    @GetMapping
    public List<CompilationDto> getCompilations(
-           @Valid BaseFilter pageFilter,
-           @RequestParam(defaultValue = "false") Boolean pinned
+           @Valid BaseFilter filter,
+           @RequestParam(defaultValue = "false") boolean pinned
    ) {
-      return service.getCompilations(pinned, pageFilter);
+      return service.getCompilations(pinned, filter);
    }
 
    @GetMapping("/{id}")

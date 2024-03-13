@@ -43,20 +43,20 @@ public class RequestServiceImpl implements RequestService {
    private final UserMapper userMapper;
 
    @Override
-   public ParticipationRequestDto discardOwnRequestForEvent(long userId, long requestId) {
+   public ParticipationRequestDto cancelOwnRequestForEvent(long userId, long requestId) {
       User requester = userService.getUserUtil(userId);
 
       RequestEntity requestEntity = requestRepository.findById(requestId).orElseThrow(() -> new RequestNotFoundException(requestId));
 
       Request request = mapper.toModel(requestEntity);
-      if (request.getStatus() != RequestStatus.PENDING) {
+      if (!request.getStatus().equals(RequestStatus.PENDING)) {
          throw new RequestNotFoundException("cannot discard request not in pending status");
       }
-      if (request.getRequester() != requester) {
+      if (!request.getRequester().equals(requester)) {
          throw new RequestNotFoundException(
                  String.format("user with id=%d is now requester to request with id=%d", userId, requestId));
       }
-      request.setStatus(RequestStatus.REJECTED);
+      request.setStatus(RequestStatus.CANCELED);
       RequestEntity result = requestRepository.save(mapper.toEntity(request));
       return mapper.toDto(mapper.toModel(result));
    }
@@ -137,6 +137,7 @@ public class RequestServiceImpl implements RequestService {
       User currentUser = userService.getUserUtil(userId);
       EventEntity eventEntity = eventRepository.findById(eventId).orElseThrow(() -> (new EventNotFoundException(eventId)));
       Event event = eventMapper.toModel(eventEntity);
+      eventService.appendStats(event);
       if (Objects.equals(userId, event.getInitiator().getId())) {
          throw new NewParticipationRequestException("Нельзя создавать заявки на участие в своих событиях");
       }
@@ -150,11 +151,8 @@ public class RequestServiceImpl implements RequestService {
       if (event.getState() != EventState.PUBLISHED) {
          throw new NewParticipationRequestException("Нельзя участвовать в неопубликованном событии");
       }
-      spec = Specification
-              .where(RequestSpecs.ofEvent(eventEntity))
-              .and(Specification.not(RequestSpecs.ofStatus(RequestStatus.REJECTED)));
-      long curRequests = requestRepository.count(spec);
-      if (event.getParticipantLimit() != 0 && curRequests == (long) event.getParticipantLimit()) {
+
+      if (event.getParticipantLimit() != 0 && event.getConfirmedRequests() == (long) event.getParticipantLimit()) {
          throw new NewParticipationRequestException("Достигнут лимит запросов на участие");
       }
       Request request = new Request(

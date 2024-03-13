@@ -45,6 +45,7 @@ public class EventSpecification {
          return builder.and(predicates.toArray(Predicate[]::new));
       };
    }
+
    public static Specification<EventEntity> ofEventIdAndPublished(Long eventId) {
       return (root, query, builder) -> {
          List<Predicate> predicates = new ArrayList<>();
@@ -53,6 +54,7 @@ public class EventSpecification {
          return builder.and(predicates.toArray(Predicate[]::new));
       };
    }
+
    public static Specification<EventEntity> ofCategory(Long categoryId) {
       return (root, query, builder) -> {
          List<Predicate> predicates = new ArrayList<>();
@@ -97,6 +99,5 @@ public class EventSpecification {
          return builder.and(predicates.toArray(Predicate[]::new));
       };
    }
-
 
 }

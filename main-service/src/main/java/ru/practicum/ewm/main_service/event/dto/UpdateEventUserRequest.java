@@ -7,7 +7,6 @@ import ru.practicum.ewm.main_service.event.model.EventStateAction;
 import ru.practicum.ewm.main_service.event.model.Location;
 import ru.practicum.ewm.main_service.event.validators.FutureAfterTwoHours;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 

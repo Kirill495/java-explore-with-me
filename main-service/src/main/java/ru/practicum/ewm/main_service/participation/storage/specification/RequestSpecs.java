@@ -27,7 +27,7 @@ public class RequestSpecs {
    }
 
    public static Specification<RequestEntity> ofStatus(RequestStatus status) {
-      if(Objects.isNull(status)) {
+      if (Objects.isNull(status)) {
          return null;
       }
       return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("status"), status));

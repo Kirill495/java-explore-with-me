@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(path = "/events")
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class PubEventController {
 
    @GetMapping(path = "/{eventId}")
    @ResponseStatus(HttpStatus.OK)
-   public EventFullDto getEvents(
+   public EventFullDto getEvent(
            @PathVariable @Positive Long eventId,
            HttpServletRequest request) {
       service.recordEndpointHit(request);

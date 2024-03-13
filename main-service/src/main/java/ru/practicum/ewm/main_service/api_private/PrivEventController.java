@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
-import ru.practicum.ewm.main_service.event.dto.EventShortDto;
 import ru.practicum.ewm.main_service.event.dto.NewEventDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.main_service.event.storage.service.EventService;
@@ -25,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(path = "/users/{userId}/events")
 @RequiredArgsConstructor
@@ -60,10 +60,10 @@ public class PrivEventController {
    @ResponseStatus(HttpStatus.OK)
    @PatchMapping(path = "/{eventId}")
    public EventFullDto updateEvent(
-           @PathVariable(name = "userId") @Positive Long userId,
-           @PathVariable(name = "eventId") @Positive Long eventId,
+           @PathVariable(name = "userId") @Positive Integer userId,
+           @PathVariable(name = "eventId") @Positive Integer eventId,
            @Valid @RequestBody UpdateEventUserRequest eventDto) {
-      return eventService.updateEventByAuthor(userId, eventId, eventDto);
+      return eventService.updateEventByAuthor((long) userId, (long) eventId, eventDto);
    }
 
    /*
@@ -83,9 +83,9 @@ public class PrivEventController {
    @ResponseStatus(HttpStatus.OK)
    @PatchMapping(path = "/{eventId}/requests")
    public EventRequestStatusUpdateResult updateRequestStatus(
-           @PathVariable(name = "userId") @Positive long authorId,
-           @PathVariable(name = "eventId") @Positive long eventId,
+           @PathVariable @Positive Integer userId,
+           @PathVariable @Positive Integer eventId,
            @Valid @RequestBody EventRequestStatusUpdateRequest request) {
-      return requestService.updateRequestStatus(authorId, eventId, request);
+      return requestService.updateRequestStatus((long) userId, (long) eventId, request);
    }
 }

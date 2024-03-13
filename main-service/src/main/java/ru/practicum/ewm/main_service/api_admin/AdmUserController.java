@@ -13,18 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.main_service.user.dto.UserDto;
 import ru.practicum.ewm.main_service.user.dto.UserInputDto;
 import ru.practicum.ewm.main_service.user.storage.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @Validated
 @RequestMapping(path = "/admin/users")
@@ -32,22 +30,10 @@ import java.util.List;
 public class AdmUserController {
 
    private final UserService service;
-   private final StatsClient statsClient;
-   private static final String APP = "ewm";
-   private static final String PATH = "/admin/users";
-   private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
    @PostMapping(consumes = "application/json")
-   public ResponseEntity<UserDto> createNewUser(
-           @Valid @RequestBody UserInputDto input,
-           HttpServletRequest request) {
-//      EndpointHitDto hit =  EndpointHitDto.builder()
-//              .withApp(APP)
-//              .withUri(PATH)
-//              .withIp(request.getRemoteAddr())
-//              .withTimestamp(LocalDateTime.now().format(FORMATTER))
-//              .build();
-//      statsClient.saveInfo(hit);
+   public ResponseEntity<UserDto> createNewUser(@Valid @RequestBody UserInputDto input) {
+
       return new ResponseEntity<>(service.addUser(input), HttpStatus.CREATED);
    }
 

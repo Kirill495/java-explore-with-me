@@ -1,16 +1,21 @@
 package ru.practicum.ewm.main_service.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.ewm.main_service.event.model.EventStateAction;
 import ru.practicum.ewm.main_service.event.model.Location;
 import ru.practicum.ewm.main_service.event.validators.FutureAfterTwoHours;
 
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateEventAdminRequest {
 
    @Length(min = 20, max = 2000)

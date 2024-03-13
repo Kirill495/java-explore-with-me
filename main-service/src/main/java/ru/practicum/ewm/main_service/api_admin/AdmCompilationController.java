@@ -18,6 +18,7 @@ import ru.practicum.ewm.main_service.compilation.service.CompilationService;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping("/admin/compilations")
 @RequiredArgsConstructor
@@ -31,15 +32,15 @@ public class AdmCompilationController {
       return service.createCompilation(input);
    }
 
-   @DeleteMapping("/{compilationId}")
+   @DeleteMapping("/{id}")
    @ResponseStatus(HttpStatus.NO_CONTENT)
    public void deleteCompilation(@PathVariable @Positive long id) {
       service.removeCompilation(id);
    }
 
-   @PatchMapping("/{compilationId}")
+   @PatchMapping("/{id}")
    public CompilationDto updateCompilation(
-           @PathVariable long id,
+           @PathVariable @Positive long id,
            @RequestBody @Valid UpdateCompilationDto input) {
       return service.updateCompilation(id, input);
    }

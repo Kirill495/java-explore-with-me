@@ -127,7 +127,7 @@ public class EventServiceImpl implements EventService {
               .findOne(EventSpecification.ofInitiatorAndEventId(userId, eventId))
               .orElseThrow(() -> new EventNotFoundException(eventId));
       Event event = eventMapper.toModel(entity);
-      if (event.getState() == EventState.PUBLISHED && !event.getRequestModeration()) {
+      if (event.getState() == EventState.PUBLISHED) { //  && !event.getRequestModeration()) {
          throw new EventUpdateException("Only pending or canceled events can be changed");
       }
       updateEventByAuthorInner(event, request);
@@ -138,7 +138,7 @@ public class EventServiceImpl implements EventService {
    }
 
    @Override
-   public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
+   public EventFullDto updateEventByAdmin(long eventId, UpdateEventAdminRequest updateRequest) {
 
       EventEntity entity = repository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
       Event event = eventMapper.toModel(entity);
@@ -146,7 +146,7 @@ public class EventServiceImpl implements EventService {
 
       if (action == EventStateAction.PUBLISH_EVENT && event.getState() != EventState.PENDING) {
          throw new EventUpdateException("Event can be published only in Pending status");
-      } else if (action == EventStateAction.CANCEL_EVENT && event.getState() == EventState.PUBLISHED) {
+      } else if (action == EventStateAction.REJECT_EVENT && event.getState() == EventState.PUBLISHED) {
          throw new EventUpdateException("Event in PUBLISHED state can not be canceled");
       }
       updateEventByAdminInner(event, updateRequest);
@@ -168,7 +168,7 @@ public class EventServiceImpl implements EventService {
       }
       Pageable pageable;
       if (filter.getSort() != null && filter.getSort().equals(EventSortFields.EVENT_DATE)) {
-         pageable = PageRequest.of(filter.getFrom()/ filter.getSize(), filter.getSize(), Sort.by("eventDate"));
+         pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize(), Sort.by("eventDate"));
       } else {
          pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
       }
@@ -186,7 +186,7 @@ public class EventServiceImpl implements EventService {
    @Override
    public List<EventFullDto> getEventsAdmin(AdminEventFilter filter) {
 
-      Pageable pageable = PageRequest.of( filter.getFrom()/ filter.getSize(), filter.getSize());
+      Pageable pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
       List<EventEntity> eventEntities = repository
               .findAll(EventSpecification.ofFilter(filter), pageable)
               .getContent();
@@ -207,15 +207,23 @@ public class EventServiceImpl implements EventService {
 
       statsClient.saveInfo(endpointHit);
    }
+
    public void appendStats(Event event) {
       appendStats(List.of(event));
    }
-   public void appendStats(List<Event> events) {
+
+   public void appendStats(Collection<Event> events) {
+      if (events.isEmpty()) {
+         return;
+      }
       appendViews(events);
       appendConfirmedRequests(events);
    }
 
-   private void appendViews(List<Event> events) {
+   private void appendViews(Collection<Event> events) {
+      if (events.isEmpty()) {
+         return;
+      }
       List<String> uris = events.stream()
               .map(event -> "/events/" + event.getId())
               .collect(Collectors.toList());
@@ -238,10 +246,14 @@ public class EventServiceImpl implements EventService {
       }
    }
 
-   private void appendConfirmedRequests(List<Event> events) {
-
+   private void appendConfirmedRequests(Collection<Event> events) {
+      if (events.isEmpty()) {
+         return;
+      }
       Collection<RequestsToEvent> countRequests = requestRepository.countRequestsToEvents(eventMapper.toEntity(events), RequestStatus.CONFIRMED);
-
+      if (countRequests.isEmpty()) {
+         return;
+      }
       Map<Long, Long> counts = countRequests.stream()
               .collect(Collectors.toMap(req -> (req.getEvent().getId()), RequestsToEvent::getRequestsCount));
       for (Event event : events) {
@@ -255,10 +267,8 @@ public class EventServiceImpl implements EventService {
 
       if (request.getStateAction() == EventStateAction.SEND_TO_REVIEW) {
          eventInput.setState(EventState.PENDING);
-         eventInput.setRequestModeration(true);
-      } else if (request.getStateAction() == EventStateAction.CANCEL_EVENT) {
+      } else if (request.getStateAction() == EventStateAction.CANCEL_REVIEW) {
          eventInput.setState(EventState.CANCELED);
-         eventInput.setRequestModeration(false);
       }
       if (request.getCategory() != null) {
          eventInput.setCategory(catService.getCategoryUtil(request.getCategory()));
@@ -276,7 +286,7 @@ public class EventServiceImpl implements EventService {
       if (request.getStateAction() == EventStateAction.PUBLISH_EVENT) {
          eventInput.setState(EventState.PUBLISHED);
          eventInput.setPublishedOn(LocalDateTime.now());
-      } else if (request.getStateAction() == EventStateAction.CANCEL_EVENT) {
+      } else if (request.getStateAction() == EventStateAction.REJECT_EVENT) {
          eventInput.setState(EventState.CANCELED);
       }
       if (request.getCategory() != null) {

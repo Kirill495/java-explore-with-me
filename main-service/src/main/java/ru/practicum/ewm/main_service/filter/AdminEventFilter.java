@@ -1,6 +1,5 @@
 package ru.practicum.ewm.main_service.filter;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminEventFilter extends BaseFilter{
+public class AdminEventFilter extends BaseFilter {
 
    private List<Long> users;
    private List<EventState> states;

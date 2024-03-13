@@ -16,6 +16,7 @@ import ru.practicum.ewm.main_service.participation.service.RequestService;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(path = "/users/{userId}/requests")
 @RequiredArgsConstructor
@@ -39,9 +40,9 @@ public class PrivParticipationRequestController {
 
    @ResponseStatus(HttpStatus.OK)
    @PatchMapping(path = "/{requestId}/cancel")
-   public ParticipationRequestDto DiscardOwnRequestForEvent(
+   public ParticipationRequestDto cancelOwnRequestForEvent(
            @PathVariable(name = "userId") @Positive long userId,
            @PathVariable(name = "requestId") @Positive long requestId) {
-      return requestService.discardOwnRequestForEvent(userId, requestId);
+      return requestService.cancelOwnRequestForEvent(userId, requestId);
    }
 }

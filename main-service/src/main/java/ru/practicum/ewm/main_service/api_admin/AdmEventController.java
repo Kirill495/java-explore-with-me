@@ -17,6 +17,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 
 
+@SuppressWarnings("unused")
 @RestController
 @RequestMapping(path = "/admin/events")
 @RequiredArgsConstructor
@@ -31,8 +32,8 @@ public class AdmEventController {
 
    @PatchMapping(path = "/{eventId}")
    public EventFullDto updateEvent(
-           @PathVariable(name = "eventId") @Positive Long eventId,
+           @PathVariable @Positive Integer eventId,
            @RequestBody @Valid UpdateEventAdminRequest eventDto) {
-      return service.updateEventByAdmin(eventId, eventDto);
+      return service.updateEventByAdmin((long) eventId, eventDto);
    }
 }

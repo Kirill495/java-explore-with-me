@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.client.stats.StatsClient;
 import ru.practicum.ewm.main_service.compilation.dto.CompilationDto;
 import ru.practicum.ewm.main_service.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.main_service.compilation.dto.UpdateCompilationDto;
@@ -14,17 +13,13 @@ import ru.practicum.ewm.main_service.compilation.exception.CompilationNotFoundEx
 import ru.practicum.ewm.main_service.compilation.mapper.CompilationMapper;
 import ru.practicum.ewm.main_service.compilation.model.Compilation;
 import ru.practicum.ewm.main_service.compilation.repository.CompilationRepository;
-import ru.practicum.ewm.main_service.event.mapper.EventMapper;
 import ru.practicum.ewm.main_service.event.model.Event;
-import ru.practicum.ewm.main_service.event.storage.repository.EventRepository;
 import ru.practicum.ewm.main_service.event.storage.service.EventService;
 import ru.practicum.ewm.main_service.filter.BaseFilter;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,13 +42,19 @@ public class CompilationServiceImpl implements CompilationService {
    }
 
    @Override
-   public CompilationDto updateCompilation(Long id, UpdateCompilationDto input) {
+   @Transactional
+   public CompilationDto updateCompilation(long id, UpdateCompilationDto input) {
       Compilation existingComp = findById(id);
       Compilation updComp = mapper.toModel(input);
       appendEvents(updComp, input.getEvents());
+
       existingComp.setEvents(updComp.getEvents());
-      existingComp.setPinned(updComp.getPinned());
-      existingComp.setTitle(updComp.getTitle());
+      if (updComp.getPinned() != null) {
+         existingComp.setPinned(updComp.getPinned());
+      }
+      if (updComp.getTitle() != null && !updComp.getTitle().isBlank()) {
+         existingComp.setTitle(updComp.getTitle());
+      }
 
       repository.save(mapper.toEntity(existingComp));
       appendStatsToCompilationEvents(existingComp);
@@ -62,7 +63,7 @@ public class CompilationServiceImpl implements CompilationService {
 
    @Override
    @Transactional
-   public void removeCompilation(Long id) {
+   public void removeCompilation(long id) {
       repository.deleteById(id);
    }
 
@@ -75,6 +76,7 @@ public class CompilationServiceImpl implements CompilationService {
    }
 
    @Override
+   @Transactional(readOnly = true)
    public List<CompilationDto> getCompilations(boolean pinned, BaseFilter filter) {
 
       Pageable pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
@@ -92,26 +94,22 @@ public class CompilationServiceImpl implements CompilationService {
    private Compilation findById(long id) {
       return mapper.toModel(repository.findById(id).orElseThrow(() -> new CompilationNotFoundException(id)));
    }
+
    private void appendEvents(Compilation compilation, List<Long> eventIds) {
       compilation.setEvents(getEvents(eventIds));
    }
 
    private List<Event> getEvents(List<Long> eventIds) {
-      return eventIds.isEmpty() ? Collections.emptyList() : eventService.getEventsByIds(eventIds);
+      return (eventIds == null || eventIds.isEmpty()) ? Collections.emptyList() : eventService.getEventsByIds(eventIds);
    }
 
    private void appendStatsToCompilations(List<Compilation> compilations) {
-      List<Event> events = compilations.stream()
+      Set<Event> events = compilations.stream()
               .flatMap(compilation -> (compilation.getEvents()).stream())
-              .collect(Collectors.toList());
+              .collect(Collectors.toSet());
       eventService.appendStats(events);
-      Map<Long, Event> stats = events.stream()
-              .collect(Collectors.toMap(Event::getId, Function.identity()));
-      for (Event event: events) {
-         event.setViews(stats.get(event.getId()).getViews());
-         event.setConfirmedRequests(stats.get(event.getId()).getConfirmedRequests());
-      }
    }
+
    private void appendStatsToCompilationEvents(Compilation compilation) {
       eventService.appendStats(compilation.getEvents());
    }
