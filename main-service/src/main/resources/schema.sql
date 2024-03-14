@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS participation_requests;
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS compilation_content;
 DROP TABLE IF EXISTS compilations;
 DROP TABLE IF EXISTS events;
@@ -53,3 +54,11 @@ CREATE TABLE IF NOT EXISTS compilation_content (
     event_id BIGINT REFERENCES events(id),
     PRIMARY KEY(compilation_id, event_id)
 );
+
+CREATE TABLE IF NOT EXISTS comments (
+    id BIGINT GENERATED ALWAYS AS IDENTITY,
+    event_id BIGINT REFERENCES events(id),
+    author_id BIGINT REFERENCES users(id),
+    text VARCHAR NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

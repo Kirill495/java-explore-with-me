@@ -13,6 +13,7 @@ import ru.practicum.ewm.main_service.exception.ElementNotFoundException;
 import ru.practicum.ewm.main_service.exception.OperationRequirementsMismatchException;
 import ru.practicum.ewm.main_service.handler.dto.ApiError;
 
+@SuppressWarnings("unused")
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {

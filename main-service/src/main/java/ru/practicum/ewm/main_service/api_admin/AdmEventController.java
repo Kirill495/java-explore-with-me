@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.main_service.event.service.EventService;
-import ru.practicum.ewm.main_service.filter.AdminEventFilter;
+import ru.practicum.ewm.main_service.event.filter.AdminEventFilter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

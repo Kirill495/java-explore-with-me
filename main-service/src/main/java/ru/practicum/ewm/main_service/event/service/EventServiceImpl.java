@@ -25,8 +25,8 @@ import ru.practicum.ewm.main_service.event.model.EventState;
 import ru.practicum.ewm.main_service.event.model.EventStateAction;
 import ru.practicum.ewm.main_service.event.storage.repository.EventRepository;
 import ru.practicum.ewm.main_service.event.storage.specification.EventSpecification;
-import ru.practicum.ewm.main_service.filter.AdminEventFilter;
-import ru.practicum.ewm.main_service.filter.PublicEventFilter;
+import ru.practicum.ewm.main_service.event.filter.AdminEventFilter;
+import ru.practicum.ewm.main_service.event.filter.PublicEventFilter;
 import ru.practicum.ewm.main_service.participation.model.RequestStatus;
 import ru.practicum.ewm.main_service.participation.storage.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.main_service.user.model.User;
@@ -117,6 +117,12 @@ public class EventServiceImpl implements EventService {
               .findOne(EventSpecification.ofInitiatorAndEventId(userId, eventId))
               .orElseThrow(() -> new EventNotFoundException(eventId));
       return eventMapper.toModel(event);
+   }
+
+   @Override
+   public Event getEventUtil(long eventId) {
+      return eventMapper
+              .toModel(repository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId)));
    }
 
    @Override
