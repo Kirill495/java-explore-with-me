@@ -3,7 +3,7 @@ package ru.practicum.ewm.stats.server.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
-import ru.practicum.ewm.stats.server.dto.EndpointHit;
+import ru.practicum.ewm.stats.dto.EndpointHit;
 import ru.practicum.ewm.stats.server.entity.EndpointHitEntity;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,

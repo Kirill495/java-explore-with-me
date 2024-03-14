@@ -1,15 +1,5 @@
 version: '3.1'
 services:
-  stats-client:
-    build: stats/stats-client/
-    image: stats_client
-    container_name: stats_client
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-    depends_on:
-      - stats-server
-
   stats-server:
     build: stats/stats-server/
     image: stats_server
@@ -25,6 +15,7 @@ services:
       - DB_HOST=stats-db
       - DB_PORT=5432
       - DB_NAME=stats
+      - SERVER_PORT=9090
       - POSTGRES_USER=${DB_USER_NAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
 
@@ -39,5 +30,41 @@ services:
       - "6541:5432"
     environment:
       - POSTGRES_DB=stats
+      - POSTGRES_USER=${DB_USER_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  ewm-service:
+    build: main-service/
+    image: main_service
+    container_name: main_service
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - stats-server
+      - ewm-db
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=ewm-db
+      - DB_PORT=5432
+      - DB_NAME=ewm
+      - SERVER_PORT=8080
+      - STATS_SERVER_PORT=9090
+      - STATS_SERVER=stats-server
+      - POSTGRES_USER=${DB_USER_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
+  ewm-db:
+    image: postgres:14-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    env_file:
+      - .env
+    container_name: ewm_db
+    ports:
+      - "6542:5432"
+    environment:
+      - POSTGRES_DB=ewm
       - POSTGRES_USER=${DB_USER_NAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}

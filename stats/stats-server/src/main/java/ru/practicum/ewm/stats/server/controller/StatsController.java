@@ -10,14 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.stats.server.dto.EndpointHit;
-import ru.practicum.ewm.stats.server.dto.ViewStats;
+import ru.practicum.ewm.stats.dto.EndpointHit;
+import ru.practicum.ewm.stats.dto.ViewStats;
 import ru.practicum.ewm.stats.server.service.StatsService;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 @RestController
 public class StatsController {
