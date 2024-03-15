@@ -21,7 +21,7 @@ public class CommentSpecification {
             predicates.add(builder.like(root.get("text"), '%' + filter.getText() + '%'));
          }
          if ((filter.getEvents() != null) && !filter.getEvents().isEmpty()) {
-            predicates.add(builder.in(root.get("event").get("id")).in(filter.getEvents()));
+            predicates.add(root.get("event").in(filter.getEvents()));
          }
          if (filter.getRangeStart() != null) {
             predicates.add(builder.greaterThanOrEqualTo(root.get("createdOn"), filter.getRangeStart()));
