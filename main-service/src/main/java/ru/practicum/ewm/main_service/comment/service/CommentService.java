@@ -22,6 +22,8 @@ public interface CommentService {
 
    Collection<CommentShortDto> getUserComments(long authorId, CommentFilter filter);
 
+   CommentDto getUserComment(long authorId, long commentId);
+
    Collection<CommentShortDto> getAllCommentsToEvent(long eventId, BaseFilter filter);
 
    Collection<CommentDto> getAllComments(CommentFilter filter);

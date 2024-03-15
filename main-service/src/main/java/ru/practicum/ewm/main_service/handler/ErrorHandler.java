@@ -52,6 +52,13 @@ public class ErrorHandler {
       return new ApiError(message, INVALID_REQUEST_REASON, HttpStatus.BAD_REQUEST);
    }
 
+   @ExceptionHandler(RuntimeException.class)
+   @ResponseStatus(HttpStatus.BAD_REQUEST)
+   public ApiError handleRuntimeException(final RuntimeException e) {
+      log.info("Got status {}", HttpStatus.NOT_FOUND, e);
+      return new ApiError(e.getMessage(), INVALID_REQUEST_REASON, HttpStatus.BAD_REQUEST);
+   }
+
    @ExceptionHandler({ConstraintViolationException.class})
    @ResponseStatus(HttpStatus.CONFLICT)
    public ApiError handleConstraintViolationException(final ConstraintViolationException e) {

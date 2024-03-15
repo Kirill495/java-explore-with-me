@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.ewm.main_service.comment.storage.entity.CommentEntity;
 import ru.practicum.ewm.main_service.event.model.EventState;
 import ru.practicum.ewm.main_service.comment.filter.CommentFilter;
+import ru.practicum.ewm.main_service.user.storage.entity.UserEntity;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -34,6 +35,10 @@ public class CommentSpecification {
 
    public static Specification<CommentEntity> ofAuthor(Long authorId) {
       return (root, query, builder) -> builder.equal(root.get("author").get("id"), authorId);
+   }
+
+   public static Specification<CommentEntity> ofId(UserEntity author) {
+      return (root, query, builder) -> builder.equal(root.get("author"), author);
    }
 
    public static Specification<CommentEntity> ofEvent(Long eventId) {

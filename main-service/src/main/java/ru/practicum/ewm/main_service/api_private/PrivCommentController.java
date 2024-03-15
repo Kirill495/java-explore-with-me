@@ -2,6 +2,7 @@ package ru.practicum.ewm.main_service.api_private;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,6 +23,7 @@ import javax.validation.constraints.Positive;
 import java.util.Collection;
 
 @SuppressWarnings("unused")
+@Validated
 @RestController
 @RequestMapping(path = "/users/{userId}/comments")
 @RequiredArgsConstructor
@@ -56,7 +58,7 @@ public class PrivCommentController {
    /*
    Удаление комментария автором
     */
-   @ResponseStatus(HttpStatus.NOT_FOUND)
+   @ResponseStatus(HttpStatus.NO_CONTENT)
    @DeleteMapping(path = "/{id}")
    public void removeCommentByAuthor(
            @PathVariable("userId") @Positive Long authorId,
@@ -74,5 +76,13 @@ public class PrivCommentController {
            @PathVariable("userId") @Positive Long authorId,
            @Valid CommentFilter filter) {
       return service.getUserComments(authorId, filter);
+   }
+
+   @ResponseStatus(HttpStatus.OK)
+   @GetMapping(path = "/{id}")
+   public CommentDto getUserComment(
+           @PathVariable("userId") @Positive Long authorId,
+           @PathVariable("id") @Positive Long commentId) {
+      return service.getUserComment(authorId, commentId);
    }
 }

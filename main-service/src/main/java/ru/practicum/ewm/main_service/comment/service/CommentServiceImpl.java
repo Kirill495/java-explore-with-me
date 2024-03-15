@@ -110,13 +110,21 @@ public class CommentServiceImpl implements CommentService {
    @Override
    @Transactional(readOnly = true)
    public Collection<CommentShortDto> getUserComments(long authorId, CommentFilter filter) {
-
       User author = userService.getUserUtil(authorId);
       Pageable pageable = PageRequest.of(filter.getFrom() / filter.getSize(), filter.getSize());
       Collection<CommentEntity> entities = repository
               .findAll(CommentSpecification.ofFilter(filter)
                       .and(CommentSpecification.ofAuthor(author.getId())), pageable).getContent();
       return mapper.toShortDto(mapper.toModel(entities));
+   }
+
+   @Override
+   public CommentDto getUserComment(long authorId, long commentId) {
+      User author = userService.getUserUtil(authorId);
+      CommentEntity entity = repository.findOne(CommentSpecification.ofAuthor(author.getId()).and(
+              (root, query, builder) -> builder.equal(root.get("id"), commentId)))
+              .orElseThrow(() -> new CommentNotFoundException(commentId));
+      return mapper.toDto(mapper.toModel(entity));
    }
 
    @Override
