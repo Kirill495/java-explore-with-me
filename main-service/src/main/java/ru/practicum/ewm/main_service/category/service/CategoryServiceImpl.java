@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
    @Override
    public CategoryDto updateCategory(Long id, NewCategoryDto cat) {
       CategoryEntity catEntity = repository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
-      if (repository.exists((root, query, builder) -> builder.equal(root.get("name"), cat.getName()))) {
+      if (repository.exists((root, query, builder) -> builder.and(builder.equal(root.get("name"), cat.getName()), builder.notEqual(root.get("id"), id)))) {
          throw new CategoryUpdateException(String.format("Category with name=%s already exists", cat.getName()));
       }
       Category category = mapper.toModel(catEntity);
