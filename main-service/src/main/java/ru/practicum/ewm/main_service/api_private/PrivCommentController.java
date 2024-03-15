@@ -44,7 +44,7 @@ public class PrivCommentController {
    /*
    Обновление комментария пользователем
     */
-   @ResponseStatus(HttpStatus.CREATED)
+   @ResponseStatus(HttpStatus.OK)
    @PatchMapping(path = "/{id}")
    public CommentDto updateCommentByAuthor(
            @PathVariable("userId") @Positive Long authorId,

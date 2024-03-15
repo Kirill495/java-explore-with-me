@@ -33,20 +33,14 @@ public class CommentSpecification {
    }
 
    public static Specification<CommentEntity> ofAuthor(Long authorId) {
-      return (root, query, builder) -> {
-         return builder.equal(root.get("author").get("id"), authorId);
-      };
+      return (root, query, builder) -> builder.equal(root.get("author").get("id"), authorId);
    }
 
    public static Specification<CommentEntity> ofEvent(Long eventId) {
-      return (root, query, builder) -> {
-         return builder.equal(root.get("event").get("id"), eventId);
-      };
+      return (root, query, builder) -> builder.equal(root.get("event").get("id"), eventId);
    }
 
    public static Specification<CommentEntity> ofOnlyPublishedEvents() {
-      return (root, query, builder) -> {
-         return builder.equal(root.get("event").get("state"), EventState.PUBLISHED.name());
-      };
+      return (root, query, builder) -> builder.equal(root.get("event").get("state"), EventState.PUBLISHED.name());
    }
 }
