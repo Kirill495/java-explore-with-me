@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main_service.user.dto.UserDto;
 import ru.practicum.ewm.main_service.user.dto.UserInputDto;
+import ru.practicum.ewm.main_service.user.exception.CreateUserException;
 import ru.practicum.ewm.main_service.user.exception.UserNotFoundException;
 import ru.practicum.ewm.main_service.user.mapper.UserMapper;
 import ru.practicum.ewm.main_service.user.model.User;
@@ -23,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
    @Override
    public UserDto addUser(UserInputDto userDto) {
+      if (repository.exists((root, query, builder) -> builder.equal(root.get("email"), userDto.getEmail()))) {
+         throw new CreateUserException(String.format("user with email=%s already exists", userDto.getEmail()));
+      }
       return mapper.toOutputDto(mapper.toModel(repository.save(mapper.toEntity(mapper.toModel(userDto)))));
    }
 
