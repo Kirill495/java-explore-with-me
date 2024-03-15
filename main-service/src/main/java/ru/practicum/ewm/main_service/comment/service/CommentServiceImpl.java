@@ -45,11 +45,6 @@ public class CommentServiceImpl implements CommentService {
          throw new NewCommentException("Only published events can be commented");
       }
 
-      // todo : реализовать функциональность, что комментарии к событию могут оставлять только автор события или подписчики
-//      if(!event.getInitiator().equals(author)) {
-//         requestService.getRequestsForEvent()
-//         throw new NewCommentException("Only author or participants can comment the event");
-//      }
       Comment comment = mapper.toModel(input);
       comment.setAuthor(author);
       comment.setEvent(event);
