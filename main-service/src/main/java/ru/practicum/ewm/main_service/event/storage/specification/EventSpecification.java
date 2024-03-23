@@ -4,8 +4,8 @@ import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.ewm.main_service.event.storage.entity.EventEntity;
 import ru.practicum.ewm.main_service.event.model.EventState;
-import ru.practicum.ewm.main_service.filter.AdminEventFilter;
-import ru.practicum.ewm.main_service.filter.PublicEventFilter;
+import ru.practicum.ewm.main_service.event.filter.AdminEventFilter;
+import ru.practicum.ewm.main_service.event.filter.PublicEventFilter;
 import ru.practicum.ewm.main_service.participation.model.RequestStatus;
 import ru.practicum.ewm.main_service.participation.storage.entity.RequestEntity;
 

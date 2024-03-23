@@ -6,8 +6,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main_service.category.dto.CategoryDto;
 import ru.practicum.ewm.main_service.category.dto.NewCategoryDto;
+import ru.practicum.ewm.main_service.category.exception.CategoryCreateException;
 import ru.practicum.ewm.main_service.category.exception.CategoryNotFoundException;
 import ru.practicum.ewm.main_service.category.exception.CategoryRemoveException;
+import ru.practicum.ewm.main_service.category.exception.CategoryUpdateException;
 import ru.practicum.ewm.main_service.category.mapper.CategoryMapper;
 import ru.practicum.ewm.main_service.category.model.Category;
 import ru.practicum.ewm.main_service.category.storage.entity.CategoryEntity;
@@ -28,12 +30,18 @@ public class CategoryServiceImpl implements CategoryService {
 
    @Override
    public CategoryDto addCategory(NewCategoryDto cat) {
+      if (repository.exists((root, query, builder) -> builder.equal(root.get("name"), cat.getName()))) {
+         throw new CategoryCreateException(String.format("Category with name=%s already exists", cat.getName()));
+      }
       return mapper.toDto(repository.save(mapper.toEntity(cat)));
    }
 
    @Override
    public CategoryDto updateCategory(Long id, NewCategoryDto cat) {
       CategoryEntity catEntity = repository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+      if (repository.exists((root, query, builder) -> builder.and(builder.equal(root.get("name"), cat.getName()), builder.notEqual(root.get("id"), id)))) {
+         throw new CategoryUpdateException(String.format("Category with name=%s already exists", cat.getName()));
+      }
       Category category = mapper.toModel(catEntity);
       category.setName(cat.getName());
       return mapper.toDto(repository.save(mapper.toEntity(category)));

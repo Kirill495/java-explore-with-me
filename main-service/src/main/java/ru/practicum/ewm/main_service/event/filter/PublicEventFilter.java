@@ -1,4 +1,4 @@
-package ru.practicum.ewm.main_service.filter;
+package ru.practicum.ewm.main_service.event.filter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.main_service.event.model.EventSortFields;
+import ru.practicum.ewm.main_service.filter.BaseFilter;
 
 import java.time.LocalDateTime;
 import java.util.List;

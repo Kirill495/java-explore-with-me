@@ -13,5 +13,6 @@ public class User {
    @EqualsAndHashCode.Include(rank = 1000)
    private Long id;
    private String name;
+   @EqualsAndHashCode.Include(rank = 2000)
    private String email;
 }

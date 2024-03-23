@@ -7,8 +7,8 @@ import ru.practicum.ewm.main_service.event.dto.NewEventDto;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventAdminRequest;
 import ru.practicum.ewm.main_service.event.dto.UpdateEventUserRequest;
 import ru.practicum.ewm.main_service.event.model.Event;
-import ru.practicum.ewm.main_service.filter.AdminEventFilter;
-import ru.practicum.ewm.main_service.filter.PublicEventFilter;
+import ru.practicum.ewm.main_service.event.filter.AdminEventFilter;
+import ru.practicum.ewm.main_service.event.filter.PublicEventFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
@@ -24,6 +24,8 @@ public interface EventService {
    EventFullDto getUserEvent(Long userId, Long eventId);
 
    Event getUserEventUtil(long userId, long eventId);
+
+   Event getEventUtil(long eventId);
 
    EventFullDto updateEventByAuthor(Long userId, Long eventId, UpdateEventUserRequest request);
 

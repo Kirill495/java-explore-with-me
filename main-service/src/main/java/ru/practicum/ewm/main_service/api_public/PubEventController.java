@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.main_service.event.dto.EventFullDto;
 import ru.practicum.ewm.main_service.event.dto.EventShortDto;
 import ru.practicum.ewm.main_service.event.service.EventService;
-import ru.practicum.ewm.main_service.filter.PublicEventFilter;
+import ru.practicum.ewm.main_service.event.filter.PublicEventFilter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;

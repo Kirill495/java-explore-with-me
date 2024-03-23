@@ -13,6 +13,7 @@ import ru.practicum.ewm.main_service.exception.ElementNotFoundException;
 import ru.practicum.ewm.main_service.exception.OperationRequirementsMismatchException;
 import ru.practicum.ewm.main_service.handler.dto.ApiError;
 
+@SuppressWarnings("unused")
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
@@ -49,6 +50,13 @@ public class ErrorHandler {
          message = e.getMessage();
       }
       return new ApiError(message, INVALID_REQUEST_REASON, HttpStatus.BAD_REQUEST);
+   }
+
+   @ExceptionHandler(RuntimeException.class)
+   @ResponseStatus(HttpStatus.BAD_REQUEST)
+   public ApiError handleRuntimeException(final RuntimeException e) {
+      log.info("Got status {}", HttpStatus.NOT_FOUND, e);
+      return new ApiError(e.getMessage(), INVALID_REQUEST_REASON, HttpStatus.BAD_REQUEST);
    }
 
    @ExceptionHandler({ConstraintViolationException.class})
